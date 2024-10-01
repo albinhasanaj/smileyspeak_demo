@@ -1,4 +1,5 @@
 "use client";
+import { useAuth } from '@/context/AuthContext';
 import Image from 'next/legacy/image'
 import React from 'react'
 
@@ -17,22 +18,27 @@ interface CardProps {
 const Card = ({ card_id, username, email, profilePic, comment, likes, tags }: CardProps) => {
     const [likeCount, setlikeCount] = React.useState(likes);
     const [hasLiked, setHasLiked] = React.useState(false);
+    const { isAuthenticated } = useAuth();
 
     const handleLikeClick = async () => {
-        if (hasLiked) {
-            setlikeCount(likeCount - 1)
-            setHasLiked(false)
+        if (isAuthenticated) {
+            if (hasLiked) {
+                setlikeCount(likeCount - 1)
+                setHasLiked(false)
 
-            toast.success("Unliked", {
-                icon: '👎'
-            })
+                toast.success("Unliked", {
+                    icon: '👎'
+                })
 
+            } else {
+                setlikeCount(likeCount + 1)
+                setHasLiked(true)
+                toast.success("Liked", {
+                    icon: '👍'
+                })
+            }
         } else {
-            setlikeCount(likeCount + 1)
-            setHasLiked(true)
-            toast.success("Liked", {
-                icon: '👍'
-            })
+            toast.error("Please log in to like a comment")
         }
     }
 
